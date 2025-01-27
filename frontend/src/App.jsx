@@ -1,24 +1,22 @@
-import { useState } from 'react'
-import './App.css'
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Navbar from "./components/Navbar.jsx";
+import Register from "./pages/Register.jsx";
+import "./App.css";
+import "./styles/text.css";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <nav className="bg-white shadow-md">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <a href="#" className="text-2xl font-bold text-blue-600">MyApp</a>
-          <div className="space-x-4">
-            <a href="#" className="text-gray-700 hover:text-blue-600">Home</a>
-            <a href="#" className="text-gray-700 hover:text-blue-600">Features</a>
-            <a href="#" className="text-gray-700 hover:text-blue-600">Pricing</a>
-            <a href="#" className="text-gray-700 hover:text-blue-600">Contact</a>
-          </div>
-        </div>
-      </nav>
-    </>
-  )
+    <Router>
+      {/* Navbar siempre visible */}
+      <Navbar />
+
+      {/* Rutas configuradas */}
+      <Routes>
+        <Route path="/" element={<h1 className="text-center mt-10">Inicio</h1>} />
+        <Route path="/register" element={<Register />} />
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
+export default App;
