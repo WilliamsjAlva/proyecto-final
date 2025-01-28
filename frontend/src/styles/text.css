@@ -1,0 +1,77 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+/* Estilos de texto para PC*/
+
+.h1Web{
+    font-family: 'Inter', serif;
+    font-size: 3rem;
+    font-weight: bold;
+}
+
+.h2Web{
+    font-family: 'Inter', serif;
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+.h3Web{
+    font-family: 'Inter', serif;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.h4Web{
+    font-family: 'Inter', serif;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.h5Web{
+    font-family: 'Inter', serif;
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+.pWeb{
+    font-family: 'Inter', serif;
+    font-size: 1rem;
+    font-weight: medium;
+}
+
+/* Estilos de texto para mobile*/
+
+.h1Mobile{
+    font-family: 'Inter', serif;
+    font-size: 3rem;
+    font-weight: bold;
+}
+
+.h2Mobile{
+    font-family: 'Inter', serif;
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+.h3Mobile{
+    font-family: 'Inter', serif;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.h4Mobile{
+    font-family: 'Inter', serif;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.h5Mobile{
+    font-family: 'Inter', serif;
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+.pMobile{
+    font-family: 'Inter', serif;
+    font-size: 1rem;
+    font-weight: medium;
+}
