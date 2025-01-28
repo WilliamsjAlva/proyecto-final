@@ -1,4 +1,4 @@
-const FormLabel = ({ type = "text", placeholder = "", id, className = "", ...props }) => {
+const FormInput = ({ type = "text", placeholder = "", id, className = "", ...props }) => {
     return (
         <input
             type={type}
@@ -10,4 +10,4 @@ const FormLabel = ({ type = "text", placeholder = "", id, className = "", ...pro
     );
 };
 
-export default FormLabel;
+export default FormInput;
