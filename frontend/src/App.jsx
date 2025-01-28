@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar.jsx";
 import Register from "./pages/Register.jsx";
+import Login from "./pages/Login.jsx"; // Importa la nueva página de Login
 import "./App.css";
 import "./styles/text.css";
 
@@ -10,11 +11,13 @@ function App() {
       {/* Navbar siempre visible */}
       <Navbar />
 
-      {/* Rutas configuradas */}
-      <Routes>
-        <Route path="/" element={<h1 className="text-center mt-10">Inicio</h1>} />
-        <Route path="/register" element={<Register />} />
-      </Routes>
+      {/* Contenedor con padding-top para evitar que el contenido quede debajo del navbar */}
+      <div className="pt-16">
+        <Routes>
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
+        </Routes>
+      </div>
     </Router>
   );
 }
