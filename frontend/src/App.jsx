@@ -4,21 +4,19 @@ import Register from "./pages/Register.jsx";
 import Login from "./pages/Login.jsx"; // Importa la nueva página de Login
 import "./App.css";
 import "./styles/text.css";
+import { AuthProvider } from './context/AuthContext';
 
 function App() {
   return (
-    <Router>
-      {/* Navbar siempre visible */}
-      <Navbar />
-
-      {/* Contenedor con padding-top para evitar que el contenido quede debajo del navbar */}
-      <div className="pt-16">
+    <AuthProvider>
+      <Router>
         <Routes>
-          <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          {/* Otras rutas pueden agregarse aquí */}
         </Routes>
-      </div>
-    </Router>
+      </Router>
+    </AuthProvider>
   );
 }
 
