@@ -1,39 +1,24 @@
 const express = require("express");
-const mongoose = require("mongoose");
 const dotenv = require("dotenv");
-const cors = require("cors");
-const bodyParser = require("body-parser");
+const connectDB = require("./config/db");
+const authRoutes = require("./routes/authRoutes");
+const path = require("path");
 
-// Configuración de variables de entorno
 dotenv.config();
+connectDB();
 
-// Crear la aplicación Express
 const app = express();
 
-// Middlewares
-app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
+app.use("/api/auth", authRoutes);
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Ruta de ejemplo
-app.get("/", (req, res) => {
-    res.send("¡Servidor funcionando correctamente!");
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ message: "Ocurrió un error en el servidor" });
 });
 
-// Conexión a MongoDB
-const startServer = async () => {
-    try {
-        await mongoose.connect(process.env.MONGO_URI, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
-        console.log("🚀 Conexión exitosa a MongoDB");
-        app.listen(process.env.PORT || 5000, () => {
-            console.log(`🚀 Servidor escuchando en el puerto ${process.env.PORT || 5000}`);
-        });
-    } catch (error) {
-        console.error("Error al conectar a MongoDB:", error);
-        process.exit(1);
-    }
-};
-
-startServer();
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+    console.log(`Servidor corriendo en el puerto ${PORT}`);
+});
