@@ -1,7 +1,6 @@
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 
-// Registrar usuario
 exports.registerUser = async (req, res) => {
     try {
         const { name, lastName, username, address, postalCode, email, password, profilePicture } = req.body;
@@ -27,21 +26,27 @@ exports.registerUser = async (req, res) => {
         res.status(201).json({ message: "Usuario registrado exitosamente" });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Error al registrar el usuario" });
+        res.status(500).json({ message: "Error al registrar el usuario. Inténtalo de nuevo más tarde" });
     }
 };
 
-// Iniciar sesión
+
+
+// Iniciar sesión (Login) usando username y password
 exports.loginUser = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        // Extrae username y password en lugar de email
+        const { username, password } = req.body;
 
-        const user = await User.findOne({ email });
+        // Busca al usuario por el campo username
+        const user = await User.findOne({ username });
         if (!user) return res.status(400).json({ message: "Credenciales inválidas." });
 
+        // Compara la contraseña
         const isMatch = await user.comparePassword(password);
         if (!isMatch) return res.status(400).json({ message: "Credenciales inválidas." });
 
+        // Genera el token JWT
         const token = jwt.sign(
             { id: user.id, role: user.role },
             process.env.JWT_SECRET,
@@ -55,6 +60,7 @@ exports.loginUser = async (req, res) => {
                 id: user.id,
                 name: user.name,
                 lastName: user.lastName,
+                username: user.username, // Incluimos el username
                 email: user.email,
                 role: user.role,
                 isPremium: user.isPremium,

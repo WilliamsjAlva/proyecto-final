@@ -1,4 +1,41 @@
+// src/pages/Register.jsx
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { registerUser } from "../api/authService";
+
 const Register = () => {
+    const [formData, setFormData] = useState({
+        name: "",
+        lastName: "",
+        username: "",
+        address: "",
+        postalCode: "",
+        email: "",
+        password: "",
+        profilePicture: "" // Opcional
+    });
+    const [error, setError] = useState("");
+    const navigate = useNavigate();
+
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            await registerUser(formData);
+            navigate("/login"); // Redirige al login tras un registro exitoso
+        } catch (err) {
+            // Muestra un mensaje de error y "Inténtalo de nuevo más tarde"
+            setError(
+                err.response?.data?.message
+                    ? `${err.response.data.message}. Inténtalo de nuevo más tarde`
+                    : "Error en el registro. Inténtalo de nuevo más tarde"
+            );
+        }
+    };
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50">
             <div className="max-w-md w-full bg-white shadow-md rounded-lg p-6">
@@ -24,34 +61,65 @@ const Register = () => {
                     <h1 className="text-2xl font-bold text-gray-700 mb-2">¡Bienvenido!</h1>
                     <p className="text-sm text-gray-500 mb-6">¡Vamos a registrarte!</p>
                 </div>
-
+                {error && <p className="text-red-500 text-center mb-4">{error}</p>}
                 {/* Formulario */}
-                <form className="space-y-4">
+                <form className="space-y-4" onSubmit={handleSubmit}>
                     <input
                         type="text"
+                        name="name"
                         placeholder="Nombre"
                         className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        onChange={handleChange}
+                        required
                     />
                     <input
                         type="text"
+                        name="lastName"
                         placeholder="Apellido"
                         className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        onChange={handleChange}
+                        required
                     />
                     <input
                         type="text"
+                        name="username"
                         placeholder="Nombre de Usuario"
                         className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        onChange={handleChange}
+                        required
+                    />
+                    <input
+                        type="text"
+                        name="address"
+                        placeholder="Dirección"
+                        className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        onChange={handleChange}
+                        required
+                    />
+                    <input
+                        type="text"
+                        name="postalCode"
+                        placeholder="Código Postal"
+                        className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        onChange={handleChange}
+                        required
                     />
                     <input
                         type="email"
+                        name="email"
                         placeholder="Email"
                         className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        onChange={handleChange}
+                        required
                     />
                     <div className="relative">
                         <input
                             type="password"
+                            name="password"
                             placeholder="Contraseña"
                             className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            onChange={handleChange}
+                            required
                         />
                         <div className="absolute inset-y-0 right-3 flex items-center">
                             <svg

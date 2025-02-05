@@ -1,26 +1,27 @@
-// src/context/AuthContext.jsx
-import React, { createContext, useState, useEffect } from 'react';
+// src/contexts/AuthContext.jsx
+import React, { createContext, useState } from 'react';
 
-// Creamos el contexto
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState(() => {
-    // Recuperamos el token del localStorage si existe
     const token = localStorage.getItem('token');
-    return token ? { token } : null;
+    // Si el token existe, podrías querer recuperar también el usuario (por ejemplo, almacenado en localStorage o decodificar el token)
+    // Por simplicidad, asumiremos que la info se almacena en el contexto tras el login.
+    return token ? { token, user: JSON.parse(localStorage.getItem('user')) } : null;
   });
 
-  // Función para guardar el token en el estado y localStorage
   const login = (data) => {
+    // data debe incluir { token, user }
     setAuth({ token: data.token, user: data.user });
     localStorage.setItem('token', data.token);
+    localStorage.setItem('user', JSON.stringify(data.user));
   };
 
-  // Función para cerrar sesión
   const logout = () => {
     setAuth(null);
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
   };
 
   return (
