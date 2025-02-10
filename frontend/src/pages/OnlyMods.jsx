@@ -1,6 +1,3 @@
-// src/pages/OnlyMods.jsx
-import React from "react";
-
 const OnlyMods = () => {
     return (
         <div className="container mx-auto p-4">

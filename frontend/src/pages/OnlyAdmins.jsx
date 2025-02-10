@@ -1,6 +1,3 @@
-// src/pages/OnlyAdmins.jsx
-import React from "react";
-
 const OnlyAdmins = () => {
     return (
         <div className="container mx-auto p-4">

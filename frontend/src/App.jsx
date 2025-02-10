@@ -1,16 +1,18 @@
-// src/App.jsx
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar.jsx";
+import Feed from "./pages/Feed.jsx";
 import Register from "./pages/Register.jsx";
 import Login from "./pages/Login.jsx";
-import Home from "./pages/Home.jsx"; // Asegúrate de tener una página Home
-import Dashboard from "./pages/Dashboard.jsx"; // Página principal para usuarios autenticados
+import Home from "./pages/Home.jsx";
+import Dashboard from "./pages/Dashboard.jsx";
 import OnlyTechnicians from "./pages/OnlyTechnicians.jsx";
 import OnlyMods from "./pages/OnlyMods.jsx";
 import OnlyAdmins from "./pages/OnlyAdmins.jsx";
-import Unauthorized from "./pages/Unauthorized.jsx"; // Página para usuarios sin permisos
+import PostDetail from "./pages/PostDetail.jsx";
+import Unauthorized from "./pages/Unauthorized.jsx";
 import PrivateRoute from "./components/PrivateRoute.jsx";
 import RoleRoute from "./components/RoleRoute.jsx";
+
 import { AuthProvider } from "./contexts/AuthContext.jsx";
 import "./App.css";
 import "./styles/text.css";
@@ -20,7 +22,6 @@ function App() {
     <AuthProvider>
       <Router>
         <Navbar />
-        {/* Agrega un contenedor con padding-top para evitar que el Navbar fijo tape el contenido */}
         <div className="pt-20">
           <Routes>
             {/* Rutas públicas */}
@@ -30,9 +31,10 @@ function App() {
             <Route path="/unauthorized" element={<Unauthorized />} />
 
             {/* Rutas privadas generales (usuarios autenticados) */}
-            <Route path="/dashboard" element={<PrivateRoute> <Dashboard /> </PrivateRoute>
-            }
-            />
+            <Route path="/dashboard" element={<PrivateRoute> <Dashboard /> </PrivateRoute>}/>
+            <Route path="/feed" element={<PrivateRoute> <Feed /> </PrivateRoute>}/>
+            <Route path="/post/:id" element={<PrivateRoute><PostDetail /></PrivateRoute>} />
+
 
             {/* Rutas basadas en roles */}
             <Route path="/onlytechnicians" element={<RoleRoute allowedRoles={["technician"]}><OnlyTechnicians /></RoleRoute>} />

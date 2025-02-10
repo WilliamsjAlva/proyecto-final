@@ -1,6 +1,3 @@
-// src/pages/OnlyTechnicians.jsx
-import React from "react";
-
 const OnlyTechnicians = () => {
     return (
         <div className="container mx-auto p-4">

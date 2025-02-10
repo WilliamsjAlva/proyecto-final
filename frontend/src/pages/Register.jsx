@@ -1,4 +1,3 @@
-// src/pages/Register.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { registerUser } from "../api/authService";
@@ -12,7 +11,7 @@ const Register = () => {
         postalCode: "",
         email: "",
         password: "",
-        profilePicture: "" // Opcional
+        profilePicture: ""
     });
     const [error, setError] = useState("");
     const navigate = useNavigate();
@@ -25,9 +24,8 @@ const Register = () => {
         e.preventDefault();
         try {
             await registerUser(formData);
-            navigate("/login"); // Redirige al login tras un registro exitoso
+            navigate("/login");
         } catch (err) {
-            // Muestra un mensaje de error y "Inténtalo de nuevo más tarde"
             setError(
                 err.response?.data?.message
                     ? `${err.response.data.message}. Inténtalo de nuevo más tarde`
@@ -40,7 +38,6 @@ const Register = () => {
         <div className="min-h-screen flex items-center justify-center bg-gray-50">
             <div className="max-w-md w-full bg-white shadow-md rounded-lg p-6">
                 <div className="flex flex-col items-center">
-                    {/* Icono */}
                     <div className="mb-4">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -57,12 +54,10 @@ const Register = () => {
                             />
                         </svg>
                     </div>
-                    {/* Título */}
                     <h1 className="text-2xl font-bold text-gray-700 mb-2">¡Bienvenido!</h1>
                     <p className="text-sm text-gray-500 mb-6">¡Vamos a registrarte!</p>
                 </div>
                 {error && <p className="text-red-500 text-center mb-4">{error}</p>}
-                {/* Formulario */}
                 <form className="space-y-4" onSubmit={handleSubmit}>
                     <input
                         type="text"

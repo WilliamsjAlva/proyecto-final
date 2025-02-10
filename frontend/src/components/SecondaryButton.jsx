@@ -4,7 +4,7 @@ const SecondaryButton = ({ text, onClick, type = "button", className = "", ...pr
             type={type}
             className={`w-full bg-transparent text-[#2f58e0] py-2 px-4 rounded-full border border-[#2f58e0] hover:border-[#3c55b0] active:border-[#273151] cursor-pointer transition ${className}`}
             onClick={onClick}
-            {...props} // Acepta cualquier otra propiedad, como disabled
+            {...props}
         >
             {text}
         </button>

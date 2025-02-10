@@ -1,4 +1,3 @@
-// src/components/Navbar.jsx
 import { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContext.jsx";
@@ -10,7 +9,7 @@ const Navbar = () => {
 
     const handleLogout = () => {
         logout();
-        navigate("/home"); // Redirige a /home después de cerrar sesión
+        navigate("/home");
     };
 
     const renderLinks = () => {
@@ -33,7 +32,6 @@ const Navbar = () => {
                     Dashboard
                 </Link>
             );
-            // Enlaces según el rol
             if (role === "user") {
                 links.push(
                     <Link key="profile" to="/profile" className="text-gray-700 hover:text-blue-600">
@@ -85,7 +83,6 @@ const Navbar = () => {
                 </Link>
                 <div className="hidden md:flex space-x-4">{renderLinks()}</div>
             </div>
-            {/* Aquí puedes incluir el menú móvil si lo necesitas */}
         </nav>
     );
 };

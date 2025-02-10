@@ -30,15 +30,11 @@ exports.registerUser = async (req, res) => {
     }
 };
 
-
-
-// Iniciar sesión (Login) usando username y password
 exports.loginUser = async (req, res) => {
     try {
-        // Extrae username y password en lugar de email
         const { username, password } = req.body;
 
-        // Busca al usuario por el campo username
+        // Busca al usuario por username
         const user = await User.findOne({ username });
         if (!user) return res.status(400).json({ message: "Credenciales inválidas." });
 
@@ -46,9 +42,9 @@ exports.loginUser = async (req, res) => {
         const isMatch = await user.comparePassword(password);
         if (!isMatch) return res.status(400).json({ message: "Credenciales inválidas." });
 
-        // Genera el token JWT
+        // Firma el token usando user._id
         const token = jwt.sign(
-            { id: user.id, role: user.role },
+            { id: user._id, role: user.role },
             process.env.JWT_SECRET,
             { expiresIn: "1d" }
         );
@@ -57,10 +53,10 @@ exports.loginUser = async (req, res) => {
             message: "Inicio de sesión exitoso",
             token,
             user: {
-                id: user.id,
+                id: user._id,
                 name: user.name,
                 lastName: user.lastName,
-                username: user.username, // Incluimos el username
+                username: user.username,
                 email: user.email,
                 role: user.role,
                 isPremium: user.isPremium,
