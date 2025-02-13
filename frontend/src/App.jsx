@@ -12,6 +12,7 @@ import PostDetail from "./pages/PostDetail.jsx";
 import Unauthorized from "./pages/Unauthorized.jsx";
 import PrivateRoute from "./components/PrivateRoute.jsx";
 import RoleRoute from "./components/RoleRoute.jsx";
+import SearchResults from "./pages/SearchResults.jsx";
 
 import { AuthProvider } from "./contexts/AuthContext.jsx";
 import "./App.css";

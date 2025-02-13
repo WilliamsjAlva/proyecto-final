@@ -1,3 +1,4 @@
+// src/components/Post.jsx
 import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -9,12 +10,13 @@ const Post = ({ post }) => {
     const { auth } = useContext(AuthContext);
     const [likes, setLikes] = useState(post.likes || 0);
     const [dislikes, setDislikes] = useState(post.dislikes || 0);
-    const [userReaction, setUserReaction] = useState(null);
+    const [userReaction, setUserReaction] = useState(null); // "like", "dislike", o null
     const [comments, setComments] = useState([]);
     const [showChat, setShowChat] = useState(false);
     const [error, setError] = useState("");
     const navigate = useNavigate();
 
+    // Cargar comentarios
     const loadComments = async () => {
         try {
             const response = await axios.get(`http://localhost:5000/api/comments/${post._id}`, {
@@ -31,10 +33,12 @@ const Post = ({ post }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    // Redirige al detalle del post
     const handleContainerClick = () => {
         navigate(`/post/${post._id}`);
     };
 
+    // Función para dar like
     const handleLike = async (e) => {
         e.stopPropagation();
         try {
@@ -51,6 +55,7 @@ const Post = ({ post }) => {
         }
     };
 
+    // Función para dar dislike
     const handleDislike = async (e) => {
         e.stopPropagation();
         try {
@@ -67,6 +72,7 @@ const Post = ({ post }) => {
         }
     };
 
+    // Función para reportar la publicación
     const handleReport = async (e) => {
         e.stopPropagation();
         try {
@@ -79,6 +85,7 @@ const Post = ({ post }) => {
         }
     };
 
+    // Lógica para mostrar el botón de Chat Privado
     const showChatButton = () => {
         if (!auth || !auth.user) return false;
         return (
@@ -94,24 +101,19 @@ const Post = ({ post }) => {
         >
             {error && <p className="text-red-500">{error}</p>}
             <h2 className="text-xl font-bold">{post.title}</h2>
+            {/* Mostrar el nombre de usuario del autor */}
+            {post.author && (
+                <p className="text-sm text-gray-500">Por: {post.author.username}</p>
+            )}
             <p>{post.description}</p>
             <div className="flex items-center space-x-4 mt-2">
-                <button
-                    onClick={(e) => handleLike(e)}
-                    className="text-blue-600"
-                >
+                <button onClick={(e) => handleLike(e)} className="text-blue-600">
                     Like ({likes})
                 </button>
-                <button
-                    onClick={(e) => handleDislike(e)}
-                    className="text-red-600"
-                >
+                <button onClick={(e) => handleDislike(e)} className="text-red-600">
                     Dislike ({dislikes})
                 </button>
-                <button
-                    onClick={(e) => handleReport(e)}
-                    className="text-gray-600"
-                >
+                <button onClick={(e) => handleReport(e)} className="text-gray-600">
                     Reportar
                 </button>
                 {showChatButton() && (

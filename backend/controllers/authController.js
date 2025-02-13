@@ -6,7 +6,8 @@ exports.registerUser = async (req, res) => {
         const { name, lastName, username, address, postalCode, email, password, profilePicture } = req.body;
 
         const existingUser = await User.findOne({ email });
-        if (existingUser) return res.status(400).json({ message: "El correo ya está registrado." });
+        if (existingUser)
+            return res.status(400).json({ message: "El correo ya está registrado." });
 
         const user = new User({
             name,
@@ -34,15 +35,17 @@ exports.loginUser = async (req, res) => {
     try {
         const { username, password } = req.body;
 
-        // Busca al usuario por username
+        // Buscar al usuario por username
         const user = await User.findOne({ username });
-        if (!user) return res.status(400).json({ message: "Credenciales inválidas." });
+        if (!user)
+            return res.status(400).json({ message: "Credenciales inválidas." });
 
-        // Compara la contraseña
+        // Comparar la contraseña
         const isMatch = await user.comparePassword(password);
-        if (!isMatch) return res.status(400).json({ message: "Credenciales inválidas." });
+        if (!isMatch)
+            return res.status(400).json({ message: "Credenciales inválidas." });
 
-        // Firma el token usando user._id
+        // Firmar el token usando user._id
         const token = jwt.sign(
             { id: user._id, role: user.role },
             process.env.JWT_SECRET,
@@ -53,7 +56,7 @@ exports.loginUser = async (req, res) => {
             message: "Inicio de sesión exitoso",
             token,
             user: {
-                id: user._id,
+                _id: user._id, // Se devuelve _id en lugar de id
                 name: user.name,
                 lastName: user.lastName,
                 username: user.username,

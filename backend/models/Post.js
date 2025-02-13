@@ -13,6 +13,7 @@ const postSchema = new mongoose.Schema({
     likedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     dislikedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     allowPrivateChat: { type: Boolean, default: false },
+    isEdited: { type: Boolean, default: false },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Post', postSchema);
