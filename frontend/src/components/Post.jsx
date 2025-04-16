@@ -1,141 +1,105 @@
-// src/components/Post.jsx
+/*eslint-disable */
 import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from "../contexts/AuthContext";
-import Comment from "./Comment";
-import Chat from "./Chat";
+import "../styles/text.css";
+import likeImg from "../assets/like.png";
+import likedImg from "../assets/liked.png";
+import dislikeImg from "../assets/dislike.png";
+import dislikedImg from "../assets/disliked.png";
 
 const Post = ({ post }) => {
     const { auth } = useContext(AuthContext);
+    const navigate = useNavigate();
     const [likes, setLikes] = useState(post.likes || 0);
     const [dislikes, setDislikes] = useState(post.dislikes || 0);
-    const [userReaction, setUserReaction] = useState(null); // "like", "dislike", o null
-    const [comments, setComments] = useState([]);
-    const [showChat, setShowChat] = useState(false);
+    const [commentsCount, setCommentsCount] = useState(post.commentsCount || 0);
+    const [userReaction, setUserReaction] = useState(null);
     const [error, setError] = useState("");
-    const navigate = useNavigate();
 
-    // Cargar comentarios
-    const loadComments = async () => {
-        try {
-            const response = await axios.get(`http://localhost:5000/api/comments/${post._id}`, {
-                headers: { Authorization: `Bearer ${auth.token}` },
-            });
-            setComments(response.data.comments);
-        } catch (err) {
-            console.error("Error al cargar comentarios:", err);
+    useEffect(() => {
+        if (auth && auth.user && post) {
+            const userId = auth.user._id.toString();
+            if (post.likedBy?.some(id => id.toString() === userId)) {
+                setUserReaction("like");
+            } else if (post.dislikedBy?.some(id => id.toString() === userId)) {
+                setUserReaction("dislike");
+            } else {
+                setUserReaction(null);
+            }
+        }
+    }, [auth, post]);
+
+    const updateReactionState = (updatedPost) => {
+        setLikes(updatedPost.likes);
+        setDislikes(updatedPost.dislikes);
+        if (auth && auth.user) {
+            const userId = auth.user._id.toString();
+            if (updatedPost.likedBy?.some(id => id.toString() === userId)) {
+                setUserReaction("like");
+            } else if (updatedPost.dislikedBy?.some(id => id.toString() === userId)) {
+                setUserReaction("dislike");
+            } else {
+                setUserReaction(null);
+            }
         }
     };
 
-    useEffect(() => {
-        loadComments();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    // Redirige al detalle del post
-    const handleContainerClick = () => {
-        navigate(`/post/${post._id}`);
-    };
-
-    // Función para dar like
     const handleLike = async (e) => {
         e.stopPropagation();
         try {
-            if (userReaction === "like") return;
-            const response = await axios.post(`http://localhost:5000/api/posts/${post._id}/like`, {}, {
-                headers: { Authorization: `Bearer ${auth.token}` },
-            });
-            const updatedPost = response.data.post;
-            setLikes(updatedPost.likes);
-            setDislikes(updatedPost.dislikes);
-            setUserReaction("like");
-        } catch (err) {
-            setError("Error al dar like. Inténtalo de nuevo más tarde.");
-        }
+            const response = await axios.post(
+                `http://localhost:5000/api/posts/${post._id}/${userReaction === "like" ? "unlike" : "like"}`,
+                {},
+                { headers: { Authorization: `Bearer ${auth.token}` } }
+            );
+            updateReactionState(response.data.post);
+        } catch (err) {}
     };
 
-    // Función para dar dislike
     const handleDislike = async (e) => {
         e.stopPropagation();
         try {
-            if (userReaction === "dislike") return;
-            const response = await axios.post(`http://localhost:5000/api/posts/${post._id}/dislike`, {}, {
-                headers: { Authorization: `Bearer ${auth.token}` },
-            });
-            const updatedPost = response.data.post;
-            setLikes(updatedPost.likes);
-            setDislikes(updatedPost.dislikes);
-            setUserReaction("dislike");
-        } catch (err) {
-            setError("Error al dar dislike. Inténtalo de nuevo más tarde.");
-        }
-    };
-
-    // Función para reportar la publicación
-    const handleReport = async (e) => {
-        e.stopPropagation();
-        try {
-            await axios.post(`http://localhost:5000/api/posts/${post._id}/report`, {}, {
-                headers: { Authorization: `Bearer ${auth.token}` },
-            });
-            alert("Publicación reportada. Los moderadores serán notificados.");
-        } catch (err) {
-            setError("Error al reportar. Inténtalo de nuevo más tarde.");
-        }
-    };
-
-    // Lógica para mostrar el botón de Chat Privado
-    const showChatButton = () => {
-        if (!auth || !auth.user) return false;
-        return (
-            (auth.user.isPremium && post.allowPrivateChat) ||
-            auth.user.role === "technician"
-        );
+            const response = await axios.post(
+                `http://localhost:5000/api/posts/${post._id}/${userReaction === "dislike" ? "undislike" : "dislike"}`,
+                {},
+                { headers: { Authorization: `Bearer ${auth.token}` } }
+            );
+            updateReactionState(response.data.post);
+        } catch (err) {}
     };
 
     return (
-        <div
-            className="p-4 border rounded shadow mb-4 cursor-pointer"
-            onClick={handleContainerClick}
-        >
-            {error && <p className="text-red-500">{error}</p>}
-            <h2 className="text-xl font-bold">{post.title}</h2>
-            {/* Mostrar el nombre de usuario del autor */}
-            {post.author && (
-                <p className="text-sm text-gray-500">Por: {post.author.username}</p>
+        <div className="p-6 border border-gray-300 bg-white shadow-md rounded-lg hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate(`/post/${post._id}`)}>
+            {error && <p className="pWeb text-red-500 text-sm">{error}</p>}
+            <h3 className="h3Web text-gray-800">
+                {post.title}
+                {post.isEdited && <span className="text-xs text-gray-500 ml-1">(editado)</span>}
+            </h3>
+            {post.author && !post.anonymous && (
+                <p className="pWeb text-gray-500">
+                    @{post.author.username} {post.author.isBanned && " (BANEADO)"}
+                </p>
             )}
-            <p>{post.description}</p>
-            <div className="flex items-center space-x-4 mt-2">
-                <button onClick={(e) => handleLike(e)} className="text-blue-600">
-                    Like ({likes})
+            <p className="pWeb text-xs text-gray-500">Publicado el {new Date(post.createdAt).toLocaleString()}</p>
+            <p className="pWeb text-gray-700 mt-2">{post.description}</p>
+            {post.image && (
+                <div className="mt-3">
+                    <img src={`http://localhost:5000/${post.image}`} alt="Imagen de la publicación" className="w-full rounded-lg" />
+                </div>
+            )}
+            <div className="flex items-center space-x-6 mt-4">
+                <button onClick={handleLike} className="flex items-center pWeb text-gray-600 hover:text-red-600 transition-colors">
+                    <img src={userReaction === "like" ? likedImg : likeImg} alt="Like" className="w-6 h-6 mr-2" />
+                    {likes}
                 </button>
-                <button onClick={(e) => handleDislike(e)} className="text-red-600">
-                    Dislike ({dislikes})
+                <button onClick={handleDislike} className="flex items-center pWeb text-gray-600 hover:text-blue-600 transition-colors">
+                    <img src={userReaction === "dislike" ? dislikedImg : dislikeImg} alt="Dislike" className="w-6 h-6 mr-2" />
+                    {dislikes}
                 </button>
-                <button onClick={(e) => handleReport(e)} className="text-gray-600">
-                    Reportar
-                </button>
-                {showChatButton() && (
-                    <button
-                        onClick={(e) => { e.stopPropagation(); setShowChat(!showChat); }}
-                        className="text-green-600"
-                    >
-                        {showChat ? "Cerrar Chat" : "Chat Privado"}
-                    </button>
-                )}
+                <span className="pWeb text-gray-600 text-sm">💬 Comentar</span>
             </div>
-            <div className="mt-4">
-                {comments.map((comment) => (
-                    <Comment
-                        key={comment._id || comment.id}
-                        comment={comment}
-                        postId={post._id}
-                        refreshComments={loadComments}
-                    />
-                ))}
-            </div>
-            {showChat && <Chat post={post} />}
         </div>
     );
 };

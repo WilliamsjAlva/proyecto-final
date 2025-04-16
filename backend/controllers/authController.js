@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
+const { sendWelcomeEmail } = require("../utils/email");
 
 exports.registerUser = async (req, res) => {
     try {
@@ -24,9 +25,11 @@ exports.registerUser = async (req, res) => {
 
         await user.save();
 
+        await sendWelcomeEmail(user.email, user.name);
+
         res.status(201).json({ message: "Usuario registrado exitosamente" });
     } catch (error) {
-        console.error(error);
+        console.error("Error en el registro:", error);
         res.status(500).json({ message: "Error al registrar el usuario. Inténtalo de nuevo más tarde" });
     }
 };
@@ -34,18 +37,23 @@ exports.registerUser = async (req, res) => {
 exports.loginUser = async (req, res) => {
     try {
         const { username, password } = req.body;
-
-        // Buscar al usuario por username
         const user = await User.findOne({ username });
         if (!user)
             return res.status(400).json({ message: "Credenciales inválidas." });
 
-        // Comparar la contraseña
         const isMatch = await user.comparePassword(password);
         if (!isMatch)
             return res.status(400).json({ message: "Credenciales inválidas." });
 
-        // Firmar el token usando user._id
+        if (user.isBanned) {
+            let banMsg = "Su cuenta ha sido baneada.";
+            if (user.banExpiration && new Date(user.banExpiration) > new Date()) {
+                const banUntil = new Date(user.banExpiration).toLocaleDateString("es-ES");
+                banMsg = `Su cuenta ha sido baneada hasta el ${banUntil}.`;
+            }
+            return res.status(403).json({ message: banMsg });
+        }
+
         const token = jwt.sign(
             { id: user._id, role: user.role },
             process.env.JWT_SECRET,
@@ -56,7 +64,7 @@ exports.loginUser = async (req, res) => {
             message: "Inicio de sesión exitoso",
             token,
             user: {
-                _id: user._id, // Se devuelve _id en lugar de id
+                _id: user._id,
                 name: user.name,
                 lastName: user.lastName,
                 username: user.username,

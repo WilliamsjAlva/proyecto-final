@@ -1,4 +1,4 @@
-// src/pages/SearchResults.jsx
+/* eslint-disable */
 import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
@@ -39,7 +39,6 @@ const SearchResults = () => {
     useEffect(() => {
         setPage(1);
         loadPosts();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [query, auth.token]);
 
     return (

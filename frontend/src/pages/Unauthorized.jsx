@@ -1,8 +1,7 @@
 const Unauthorized = () => {
     return (
         <>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellendus voluptate magnam veniam aut tenetur! Ex, eius unde vero libero dolores, excepturi illum consequuntur neque necessitatibus rerum minus vel illo beatae.
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellendus voluptate magnam veniam aut tenetur! Ex, eius unde vero libero dolores, excepturi illum consequuntur neque necessitatibus rerum minus vel illo beatae.    Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellendus voluptate magnam veniam aut tenetur! Ex, eius unde vero libero dolores, excepturi illum consequuntur neque necessitatibus rerum minus vel illo beatae.    Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellendus voluptate magnam veniam aut tenetur! Ex, eius unde vero libero dolores, excepturi illum consequuntur neque necessitatibus rerum minus vel illo beatae.    Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellendus voluptate magnam veniam aut tenetur! Ex, eius unde vero libero dolores, excepturi illum consequuntur neque necessitatibus rerum minus vel illo beatae.    Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellendus voluptate magnam veniam aut tenetur! Ex, eius unde vero libero dolores, excepturi illum consequuntur neque necessitatibus rerum minus vel illo beatae.    Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellendus voluptate magnam veniam aut tenetur! Ex, eius unde vero libero dolores, excepturi illum consequuntur neque necessitatibus rerum minus vel illo beatae.
+            Unauthorized
         </>);
 }
 

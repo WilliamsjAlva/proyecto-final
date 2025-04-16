@@ -1,3 +1,4 @@
+/* eslint-disable */
 const FormInput = ({ type = "text", placeholder = "", id, className = "", ...props }) => {
     return (
         <input

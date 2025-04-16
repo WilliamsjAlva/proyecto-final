@@ -1,9 +1,12 @@
 const Post = require("../models/Post");
+const Notification = require("../models/Notification");
 
 exports.createPost = async (req, res) => {
     try {
-        const { title, description, anonymous, image, allowPrivateChat } = req.body;
+        const { title, description, anonymous, allowPrivateChat } = req.body;
         const author = req.user.id;
+        // Si se subió una imagen, multer la agrega en req.file
+        const image = req.file ? req.file.path : null;
         const post = new Post({ title, description, anonymous, image, allowPrivateChat, author });
         await post.save();
         res.status(201).json({ message: "Publicación creada", post });
@@ -56,11 +59,17 @@ exports.getPosts = async (req, res) => {
                 ]
             };
         }
-        const posts = await Post.find(query)
-            .populate("author", "username _id")
+        let posts = await Post.find(query)
+            .populate("author", "username _id isBanned")
             .sort({ createdAt: -1 })
             .skip((page - 1) * parseInt(limit))
             .limit(parseInt(limit));
+
+        // Si el usuario no es admin o moderador, ocultar publicaciones cuyos autores estén baneados
+        if (req.user.role !== "admin" && req.user.role !== "moderator") {
+            posts = posts.filter(post => post.author && !post.author.isBanned);
+        }
+
         res.json({ posts });
     } catch (error) {
         console.error(error);
@@ -71,9 +80,13 @@ exports.getPosts = async (req, res) => {
 exports.getPostById = async (req, res) => {
     try {
         const post = await Post.findById(req.params.id)
-            .populate('author', '_id name username');
+            .populate("author", "_id name username isBanned");
         if (!post)
             return res.status(404).json({ message: "Publicación no encontrada" });
+        // Si el autor está baneado y el solicitante no es admin o moderador, se oculta la publicación
+        if ((req.user.role !== "admin" && req.user.role !== "moderator") && post.author && post.author.isBanned) {
+            return res.status(404).json({ message: "Publicación no encontrada" });
+        }
         res.json({ post });
     } catch (error) {
         console.error(error);
@@ -90,11 +103,24 @@ exports.likePost = async (req, res) => {
             return res.status(404).json({ message: "Publicación no encontrada" });
         if (post.likedBy.includes(userId))
             return res.status(400).json({ message: "Ya has dado like a esta publicación" });
+
+        // Elimina dislike si existe y agrega like
         post.dislikedBy = post.dislikedBy.filter(id => id.toString() !== userId.toString());
         post.likedBy.push(userId);
         post.likes = post.likedBy.length;
         post.dislikes = post.dislikedBy.length;
         await post.save();
+
+        // Crear notificación de "like" si el actor no es el autor de la publicación
+        if (post.author.toString() !== userId) {
+            await Notification.create({
+                user: post.author,
+                type: "like",
+                post: postId,
+                actor: userId,
+            });
+        }
+
         res.json({ message: "Like registrado", post });
     } catch (error) {
         console.error(error);
@@ -111,11 +137,24 @@ exports.dislikePost = async (req, res) => {
             return res.status(404).json({ message: "Publicación no encontrada" });
         if (post.dislikedBy.includes(userId))
             return res.status(400).json({ message: "Ya has dado dislike a esta publicación" });
+
+        // Elimina like si existe y agrega dislike
         post.likedBy = post.likedBy.filter(id => id.toString() !== userId.toString());
         post.dislikedBy.push(userId);
         post.likes = post.likedBy.length;
         post.dislikes = post.dislikedBy.length;
         await post.save();
+
+        // Crear notificación de "dislike" si el actor no es el autor de la publicación
+        if (post.author.toString() !== userId) {
+            await Notification.create({
+                user: post.author,
+                type: "dislike",
+                post: postId,
+                actor: userId,
+            });
+        }
+
         res.json({ message: "Dislike registrado", post });
     } catch (error) {
         console.error(error);
@@ -142,7 +181,6 @@ exports.deletePost = async (req, res) => {
         res.status(500).json({ message: "Error al borrar la publicación. Inténtalo de nuevo." });
     }
 };
-
 
 exports.reportPost = async (req, res) => {
     try {

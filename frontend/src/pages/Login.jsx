@@ -1,4 +1,4 @@
-// src/pages/Login.jsx
+/* eslint-disable */
 import React, { useState, useContext } from "react";
 import profileIcon from "../assets/profileIcon.png";
 import PrimaryButton from "../components/PrimaryButton";
@@ -6,10 +6,11 @@ import FormInput from "../components/FormInput";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContext.jsx";
 import { loginUser } from "../api/authService";
+import '../styles/text.css';
 
 const Login = () => {
     const [credentials, setCredentials] = useState({
-        username: "", // Se usa username para login
+        username: "",
         password: "",
     });
     const [error, setError] = useState("");
@@ -24,9 +25,16 @@ const Login = () => {
         e.preventDefault();
         try {
             const data = await loginUser(credentials);
+
+            // Si el usuario está baneado y es permanente, bloqueamos el acceso
+            if (data.user && data.user.isBanned && data.user.isPermanentBan) {
+                setError("Su cuenta ha sido baneada permanentemente.");
+                return;
+            }
+
             // Guarda el token y otros datos en el contexto y en el localStorage
             login(data);
-            navigate("/home"); // Redirige al dashboard o página principal
+            navigate("/home");
         } catch (err) {
             setError(
                 err.response?.data?.message
@@ -39,19 +47,15 @@ const Login = () => {
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
             <div className="w-full max-w-sm bg-white rounded-2xl shadow-lg p-6">
-                {/* Ícono de perfil */}
                 <div className="flex justify-center mb-4">
                     <div className="w-24 h-24 flex items-center justify-center">
                         <img src={profileIcon} alt="profile" className="w-24 h-24 rounded-full" />
                     </div>
                 </div>
-                {/* Mensaje de bienvenida */}
-                <h2 className="h2web text-center mb-2">¡Bienvenido de nuevo!</h2>
-                <p className="text-sm text-gray-600 text-center mb-6">¡Ingresa tus datos!</p>
+                <h2 className="h2Web text-center mb-2">¡Bienvenido de nuevo!</h2>
+                <p className="pWeb text-gray-600 text-center mb-6">¡Ingresa tus datos!</p>
                 {error && <p className="text-red-500 text-center mb-4">{error}</p>}
-                {/* Formulario */}
                 <form className="space-y-4" onSubmit={handleSubmit}>
-                    {/* Campo de Nombre de Usuario */}
                     <FormInput
                         type="text"
                         id="username"
@@ -59,8 +63,8 @@ const Login = () => {
                         placeholder="Nombre de Usuario"
                         onChange={handleChange}
                         required
+                        className="pWeb"
                     />
-                    {/* Campo de Contraseña */}
                     <FormInput
                         type="password"
                         id="password"
@@ -68,16 +72,9 @@ const Login = () => {
                         placeholder="Contraseña"
                         onChange={handleChange}
                         required
+                        className="pWeb"
                     />
-                    {/* Recuérdame */}
-                    <div className="flex items-center">
-                        <input id="remember" type="checkbox" className="h-4 w-4 rounded-full" />
-                        <label htmlFor="remember" className="ml-2 text-sm text-gray-700">
-                            Recuérdame
-                        </label>
-                    </div>
-                    {/* Botón primario */}
-                    <PrimaryButton text="Iniciar sesión" type="submit" />
+                    <PrimaryButton text="Iniciar sesión" type="submit" className="pWeb" />
                 </form>
             </div>
         </div>

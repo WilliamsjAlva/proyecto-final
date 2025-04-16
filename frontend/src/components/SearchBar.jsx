@@ -1,6 +1,8 @@
-// src/components/SearchBar.jsx
+/* eslint-disable */
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import '../styles/text.css';
+import PrimaryButton from "../components/PrimaryButton";
 
 const SearchBar = () => {
     const [term, setTerm] = useState("");
@@ -20,11 +22,9 @@ const SearchBar = () => {
                 placeholder="Buscar publicaciones..."
                 value={term}
                 onChange={(e) => setTerm(e.target.value)}
-                className="p-2 border rounded"
+                className="p-2 border-[#CCCCCC] bg-[#FCFCFC] border transition duration-300 rounded focus:rounded-full"
             />
-            <button onClick={handleSearch} className="px-4 py-2 bg-blue-500 text-white rounded">
-                Buscar
-            </button>
+            <PrimaryButton text="Buscar" onClick={handleSearch} className="pWeb px-4 py-2"/>
         </div>
     );
 };
